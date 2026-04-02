@@ -1,111 +1,133 @@
-# Spendly — Finance Dashboard
+# Spendly — Finance Dashboard (React)
 
-A clean, interactive finance dashboard built with vanilla JavaScript, Chart.js, and a refined editorial dark-mode aesthetic.
+A clean, interactive finance dashboard built with **React 18** (via CDN), Chart.js, and a refined dark-mode aesthetic.
 
 ---
 
 ## 🚀 Quick Start
 
-No build tools or dependencies to install.
+No build tools or npm required.
 
-1. Download or clone the project folder.
-2. Open `index.html` in any modern browser (Chrome, Firefox, Safari, Edge).
-3. That's it — it runs fully client-side.
+1. Download `index.html`
+2. Open it in any modern browser
+3. That's it — fully self-contained
 
-> **Note:** Chart.js is loaded from CDN. You need an internet connection on first load; after that the browser caches it.
+> Chart.js and React are loaded from CDN. Internet connection needed on first load.
 
 ---
 
-## 📁 Project Structure
+## 🛠 Tech Stack
 
+| Tool | Purpose |
+|---|---|
+| **React 18** | UI rendering, component architecture |
+| **useReducer** | Centralized state management |
+| **useMemo / useEffect** | Performance optimization & side effects |
+| **Chart.js 4** | Line, Donut, and Bar charts |
+| **CSS Custom Properties** | Theming (dark/light mode) |
+| **localStorage** | Data persistence |
+
+---
+
+## 📁 Structure
+
+Single file `index.html` containing:
+- All React components
+- CSS styles
+- App logic
+
+**Component Tree:**
 ```
-finance-dashboard/
-├── index.html   — Markup & layout
-├── style.css    — All styles (CSS variables, responsive, dark/light)
-├── app.js       — Application logic, state, charts, CRUD
-└── README.md    — This file
+App
+├── Sidebar
+├── DashboardView
+│   ├── SummaryCards
+│   ├── TrendChart
+│   ├── DonutChart
+│   └── TxRow (recent)
+├── TransactionsView
+│   └── TxModal (add/edit)
+├── InsightsView
+│   └── ComparisonChart
+└── Toast
 ```
 
 ---
 
 ## ✨ Features
 
-### Dashboard Overview
-- **4 Summary Cards** — Total Balance, Income, Expenses, Savings Rate with month-over-month trend indicators
-- **Balance Trend Chart** — Line chart showing Income vs Expenses across the selected time period
-- **Spending Breakdown** — Donut chart with top expense categories
-- **Recent Transactions** — Quick-view list of the 8 most recent entries
+### Core
+- **Dashboard Overview** — 4 summary cards, balance trend line chart, spending donut chart, recent transactions
+- **Transactions** — full table with search, filter by type/category, sort by date/amount
+- **Role-Based UI** — Admin (add/edit/delete/export) vs Viewer (read-only, masked amounts)
+- **Insights** — top category, best income month, avg spend, savings goal, monthly comparison chart, category breakdown bars
 
-### Transactions Section
-- Full sortable/filterable transaction table
-- **Search** by description or category
-- **Filter** by type (Income/Expense) and category
-- **Sort** by date (newest/oldest) or amount (highest/lowest)
-- Admin-only **Add**, **Edit**, and **Delete** actions with confirmation
+### Optional (all implemented)
+- ✅ Dark / Light mode
+- ✅ localStorage persistence
+- ✅ CSV export
+- ✅ Smooth animations
+- ✅ 12 months of realistic mock seed data
+- ✅ Responsive design (mobile, tablet, desktop)
+- ✅ Empty state handling
 
-### Insights Section
-- **Top Spending Category** — Highest expense category over selected period
-- **Best Income Month** — Month with highest total income
-- **Average Monthly Spend** — Rolling average across selected period
-- **Savings Goal Tracker** — Progress toward the standard 20% savings rate target
-- **Monthly Comparison Bar Chart** — Side-by-side Income vs Expenses per month
-- **Category Breakdown** — Horizontal bar visualization of all expense categories
+---
 
-### Role-Based UI (RBAC)
-Simulated via a toggle in the sidebar:
+## 🧩 State Management
+
+Uses React's `useReducer` hook with a centralized state — similar to Redux but zero dependencies:
+
+```js
+const [state, dispatch] = useReducer(reducer, initialState);
+```
+
+**State shape:**
+```js
+{
+  transactions: [],      // All transaction data
+  filter: { search, type, category, sort },  // Active filters
+  role: 'admin',         // 'admin' | 'viewer'
+  theme: 'dark',         // 'dark' | 'light'
+  period: 6,             // Time period in months
+  view: 'dashboard',     // Active page
+  modal: { open, editing },
+  toast: { msg, type, show },
+  sidebarOpen: false,
+}
+```
+
+All state mutations go through `dispatch(action)` — no direct state mutation anywhere.
+
+---
+
+## 🎭 Role-Based UI
 
 | Feature | Admin | Viewer |
 |---|---|---|
-| View all data | ✅ | ✅ |
+| View all data & charts | ✅ | ✅ |
 | Add transactions | ✅ | ❌ |
 | Edit transactions | ✅ | ❌ |
 | Delete transactions | ✅ | ❌ |
 | Export CSV | ✅ | ❌ |
+| See exact amounts | ✅ | ❌ (masked) |
+| Trend indicators | ✅ | ❌ |
+| Info banner | ❌ | ✅ |
 
-### Additional Features
-- **Dark / Light Mode** — Toggle in sidebar footer; persisted to localStorage
-- **Time Period Selector** — Filter dashboard to last 3, 6, or 12 months
-- **CSV Export** — Downloads all filtered transactions as a `.csv` file
-- **Data Persistence** — All transactions and preferences saved to `localStorage`
-- **Seed Data** — 12 months of realistic mock transactions generated on first load
-- **Responsive Design** — Works on mobile, tablet, and desktop
-- **Empty State Handling** — Friendly empty states when no data matches filters
+Switch roles using the toggle in the sidebar footer.
 
 ---
 
-## 🎨 Design Decisions
+## 🎨 Design
 
-- **Aesthetic:** Refined editorial dark theme with warm amber (`#f5a623`) as the primary accent, complemented by green (income) and red (expense) semantic colors.
-- **Typography:** `DM Serif Display` for headings (personality), `Syne` for UI labels (clarity), `DM Mono` for numbers (legibility).
-- **State Management:** Centralized `STATE` object (no framework needed at this scale). All mutations go through dedicated functions that call `saveState()` and `refreshAll()`.
-- **Charts:** Chart.js 4 with custom theming via CSS variables for consistent light/dark appearance.
-
----
-
-## 🧩 State Management Approach
-
-All application state lives in a single `STATE` object:
-
-```js
-const STATE = {
-  role: 'admin',          // Current user role
-  theme: 'dark',          // UI theme
-  filter: { ... },        // Active filter/sort state for transactions
-  transactions: [],        // Source of truth for all transaction data
-  editingId: null,        // ID of transaction being edited (modal)
-  period: 6,              // Selected time period in months
-};
-```
-
-- **Reads** use pure functions (`getFilteredTx()`, `getPeriodTx()`)
-- **Writes** always call `saveState()` → `refreshAll()`
-- **Persistence** via `localStorage` (transactions, theme, role)
+- **Theme:** Dark with warm amber (`#f5a623`) accent
+- **Typography:** DM Serif Display (headings) + Syne (UI) + DM Mono (numbers)
+- **Charts:** Dual Y-axis line chart so income and expense lines both use full height
 
 ---
 
-## ⚙️ Assumptions Made
+## 📝 Assumptions
 
-1. Currency is USD throughout.
-2. "Balance" = total income minus total expenses over the selected period (not a running bank balance).
-3. The 20% savings rate is used as the standard benchmark for the savings goal tracker.
-4. Seed data is generated for 12 months regardless of the period selector, which filters the view.
+1. Currency is USD
+2. Balance = total income minus total expenses over selected period
+3. 20% is used as the savings rate benchmark
+4. Seed data is generated for 12 months on first load
