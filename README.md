@@ -1,6 +1,8 @@
-# Spendly — Finance Dashboard (React)
+# Spendly — Finance Dashboard
 
-A clean, interactive finance dashboard built with **React 18** (via CDN), Chart.js, and a refined dark-mode aesthetic.
+A clean, interactive personal finance dashboard built with **React 18** (via CDN), Chart.js, and a refined dark-mode aesthetic.
+
+🔗 **[Live Demo](https://finance-dashboard-six-sigma.vercel.app/)** · [GitHub Repo](https://github.com/srilathapothana/finance-dashboard)
 
 ---
 
@@ -8,11 +10,11 @@ A clean, interactive finance dashboard built with **React 18** (via CDN), Chart.
 
 No build tools or npm required.
 
-1. Download `index.html`
-2. Open it in any modern browser
-3. That's it — fully self-contained
+1. Clone the repo or download the files
+2. Open `index.html` in any modern browser
+3. That's it — works out of the box
 
-> Chart.js and React are loaded from CDN. Internet connection needed on first load.
+> Chart.js and React are loaded from CDN. An internet connection is needed on first load.
 
 ---
 
@@ -25,16 +27,19 @@ No build tools or npm required.
 | **useMemo / useEffect** | Performance optimization & side effects |
 | **Chart.js 4** | Line, Donut, and Bar charts |
 | **CSS Custom Properties** | Theming (dark/light mode) |
-| **localStorage** | Data persistence |
+| **localStorage** | Data persistence across sessions |
 
 ---
 
-## 📁 Structure
+## 📁 Project Structure
 
-Single file `index.html` containing:
-- All React components
-- CSS styles
-- App logic
+```
+finance-dashboard/
+├── index.html      # App entry point + React component tree
+├── app.js          # All React components and app logic
+├── style.css       # Global styles and CSS custom properties
+└── README.md
+```
 
 **Component Tree:**
 ```
@@ -44,7 +49,7 @@ App
 │   ├── SummaryCards
 │   ├── TrendChart
 │   ├── DonutChart
-│   └── TxRow (recent)
+│   └── TxRow (recent transactions)
 ├── TransactionsView
 │   └── TxModal (add/edit)
 ├── InsightsView
@@ -62,8 +67,8 @@ App
 - **Role-Based UI** — Admin (add/edit/delete/export) vs Viewer (read-only, masked amounts)
 - **Insights** — top category, best income month, avg spend, savings goal, monthly comparison chart, category breakdown bars
 
-### Optional (all implemented)
-- ✅ Dark / Light mode
+### Additional Features
+- ✅ Dark / Light mode toggle
 - ✅ localStorage persistence
 - ✅ CSV export
 - ✅ Smooth animations
@@ -75,7 +80,7 @@ App
 
 ## 🧩 State Management
 
-Uses React's `useReducer` hook with a centralized state — similar to Redux but zero dependencies:
+Uses React's `useReducer` hook with centralized state — similar to Redux but with zero dependencies:
 
 ```js
 const [state, dispatch] = useReducer(reducer, initialState);
@@ -121,13 +126,13 @@ Switch roles using the toggle in the sidebar footer.
 
 - **Theme:** Dark with warm amber (`#f5a623`) accent
 - **Typography:** DM Serif Display (headings) + Syne (UI) + DM Mono (numbers)
-- **Charts:** Dual Y-axis line chart so income and expense lines both use full height
+- **Charts:** Dual Y-axis line chart so income and expense lines both use full chart height
 
 ---
 
 ## 📝 Assumptions
 
 1. Currency is USD
-2. Balance = total income minus total expenses over selected period
+2. Balance = total income minus total expenses over the selected period
 3. 20% is used as the savings rate benchmark
-4. Seed data is generated for 12 months on first load
+4. Seed data is auto-generated for 12 months on first load
